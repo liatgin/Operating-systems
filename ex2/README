@@ -1,0 +1,71 @@
+liat_gin, amitnelinger
+Liat Ginosar (305470924), Amit Nelinger (203906508)
+EX: 2
+
+
+FILES:
+======
+
+uthreads.c -- a library of user level thread functions.
+
+Thread.hpp -- the header file of the Thread class.
+
+Thread.cpp -- class of the object thread.
+
+README -- This file
+
+
+ANSWERS:
+Answers to the questions:
+==========================
+
+1) If google chrome will open a new kernel level thread for 
+each tab the protection and isolation of each tab from the other tabs
+will not be preserved. That`s because kernel level threads share address
+space with each other and processes are not. Therefore
+processes are independent (a problem in a specific process does not 
+effect another process) and threads are not independent. The disadvantages
+of a process are: high overheads because every operation require a kernel trap. 
+In addition communication between processes is complicated and expensive
+(requires the operating system to communicate with each other).
+
+2) During the command execution, the pressing on the keyboard 
+caused to SIGINT interrupt to be sent from the hardware to the
+operating system. Then the shell (where we wrote he command) 
+sent a signal to the operating system which tell her
+to start a new process and each process get a new id.
+While writing the "kill" command we created a new SIGINT 
+interrupt by pressing the keyboard and another interrupt
+by pressing the Enter bottom who caused the execution of the line
+we wrote. Finally a new SIGTERM signal is sent from the shell process
+to the operating system and then it (the OS) send another signal
+SIGTERM to the process we wanted to kill and it terminates that process. 
+
+
+3) The difference between real time and virtual time is that 
+real time refers to the real physical time in the physical world.
+Virtual time is the sense of time inside of an application or informational 
+model. Example for use in a real time is if we want to measure the time it
+takes us to travel from Tel-Aviv to Haifa, using the "waze" application
+it always gives us the time estimation it may take us to reach our destination
+by giving us the exact digital hour of reaching our destination.
+An Example of using virtual time is if 2 threads ran for one minute
+(in the real world) in the computer and each thread ran only 30 seconds so each
+thread measure the time that passed as 30 seconds because that is the time it
+ran. But in the real world the time that passed is one minute.
+ 
+
+4.a) When creating a new process using fork command the child process
+has copies of all of its father memory segments. So the Stack,
+the Heap and the Global variables are all common between the father 
+and the child process. In addition those memory segments are copied to the child 
+using the "copy on write" concept.
+
+
+4.b) A pipe is the transferring of standard output of one program to 
+another program for further processing. The pipe makes possible
+the performance of some highly specialized task that none of the 
+constituent programs could perform by themselves. This direct
+connection between programs allows them to operate simultaneously and
+permits data to be transferred between them continuously rather
+than having to pass it through temporary text files.

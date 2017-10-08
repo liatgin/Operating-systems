@@ -1,0 +1,93 @@
+liat_gin, amitnelinger
+Liat Ginosar (305470924), Amit Nelinger (203906508)
+EX: 4
+
+
+FILES:
+======
+
+CachingFileSystem.cpp
+
+Makefile
+
+README - This file
+
+Description of the design:
+===========================
+we created the cach as deque data structure. The cach deque is made of pointers
+to blocks, and each Block struct contains some relevant fields about a Block.
+We implements the FBR algorithm and our cach is working according to it.
+The cach acts in the following way: for each read request if the cach is not 
+full we insert a new block of the requested file and than read this block 
+from the cach instead of the disk. If the block is already full we will 
+remove block from the old, and than  insert the requested block.
+If we have to rename a file or a directory we rename it also in the cach in
+order to keep on consistency and also in order to be able to recognize the 
+file/directory with its new name.
+    
+
+ANSWERS:
+========
+
+Question 1:
+------------
+Does caching files blocks in the heap always provides faster response then 
+accessing the disk?
+
+No, in the case that the file size is bigger than the caching capacity
+cach wont help so the caching files blocks in the heap wont provides faster 
+response then accessing the disk.
+
+Question 2:
+-----------
+Because paging is being managed by the operating system so it is more 
+complicated to manage them and control them with external algorithms.
+
+Question 3: (based on things we read in wikipedia and stackoverflow)
+------------
+working patern in files where LRU is better than LFU:
+------------------------------------------------------
+Consider an item in memory which is referenced repeatedly for a short period
+of time and is not accessed again for an extended period of time. Due to how
+rapidly it was just accessed its counter has increased drastically even though
+it will not be used again for a decent amount of time. This leaves other blocks
+which may actually be used more frequently susceptible to purging simply 
+because they were accessed through a different method.
+
+
+working patern in files where LFU is better than LRU:
+-----------------------------------------------------
+consider a constant stream of cach requests with a cache capacity of 3:
+A, B, C, A, A, A, A, A, A, A, A, A, A, A, B, C, D
+[A]
+[A, B]
+[A, B, C]
+[B, C, A] <- a stream of As keeps A at the head of the list.
+[C, A, B]
+[A, B, C]
+[B, C, D] <- here, we evict A, we can do better! 
+
+if we were using LFU so given the higher expected chance of 
+requesting an A in the future, we should not evict it even if it was 
+least recently used. 
+
+
+working patern in files where nor LFU neighter LRU are helping somehow:
+-----------------------------------------------------------------------
+If the user wants to access many different files so caching them wont help
+because there will not be a reapetable use in them.
+
+
+Question 4:
+-----------
+The reason why accesses to blocks in the "new section" does not increse the
+block counter is that if a block is already declared "new" it means that it 
+is open right now and probably someone is usuing it, so we dont want that if 
+someone (during his working on the block) closes and open the block several
+(or many) times sequentaly it will be considered as new access any time it 
+is open. We want that the block counter will increase only when we use
+a specific block after some time we did not use it or when it is the first
+time we are using it. 
+
+
+

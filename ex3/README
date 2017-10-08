@@ -1,0 +1,171 @@
+liat_gin, amitnelinger
+Liat Ginosar (305470924), Amit Nelinger (203906508)
+EX: 3
+
+
+FILES:
+======
+
+MapRduceFramework.cpp - The framework of Map Reduce.
+
+Search.cpp - function that tests the framework.
+
+RRgantChart.jpg
+
+SRTFgantChart.jpg
+
+PrioritygantChart.jpg
+
+FCFSgantChart.jpg
+
+Makefile
+
+README - This file
+
+Description of the design:
+===========================
+
+each excecMap thread and exceReduce thread has its own container and its
+own mutex.the shuffle thread inserts the output to map container that
+called inputToReduce and the excecReduce work on inputToReduce.
+
+ANSWERS:
+========
+
+Question 1:
+------------
+In order to implement a synchronization between the ExcecMap and
+shuffle using pipe and select we will define a global array that will
+contain read option for different file descriptors.For each file
+descriptor there will be a buffer for reading data.For each excecMap
+we will call to pipe with write file descriptor of the specific excecMap
+thread.
+
+
+The shuffle thread will use selct() in order to check whether a
+certain file descriptor is ready for a read operation.
+(The shuffle needs to read  data that the excecMap threads
+were write to the pipe).
+The ExcecMap threads writes to the pipe.
+
+The data that is written to the pipe is the mapped pairs that
+the Map function worked on,
+which means pairs of <K2, V2> .
+
+In order the shuffle "knows" there is no more data in the pipe
+we can save the buffers size and check when the size become 0.
+when the size of all the buffers are 0 the shuffle thread will know that
+there is no more work.
+
+
+Question 2:
+-----------
+In Order to optimize the performence of MapReduceFramework without
+Hyper threading support we will use 7 as the multilevelthread parameter.
+That is because we need 1 thread for the shuffle, and that lives us with 7
+threads for excecMap under the constrain of having 8- core.
+
+Question 3:
+------------
+-Comparing between Nira, Moti, Danny and Galit approches in the terms of:
+
+-utilizing multi cores:
+Nira used a single thread and process so she didnt took advantage of the
+multi cores programming. Galit and moti had benefit from the multi level
+cores because  Moti ran several threads (using the library pthread)
+and Nira ran several processed, The os ran threads and processes in parallel.
+Therefore Moti and Nira utilized the multi cores.Danny didnt utilized the multi
+cores because he used in user level threads and the os doesnt treat user level
+threads as multi level thread so he doesnt take advantage from the multi cores.
+
+-the ability to create a sophisticated scheduler based on internal data:
+Only Danny who used a user level thread has the ability to implement a
+sophisticated scheduler based on internal data. Galit Nira and Moti are using
+kernel level thread, Therefore they have no control on the scheduler decisin
+because the os cares for it.
+
+-communication time:
+Nira used a single level threads so there was not communication
+between some threadas. Galit used multi processes so the communication
+in her code took the longest time because communication between processes
+is much longer than communication between threads. Danny used user level thread
+so the communication between threads was the most fast because from the os
+ point of view it is not multi threaded program. so all the communication
+is internal (inside the program).
+Moty used a kernel level threads so the communication between
+threads is faster than Galit but slower than Danny.
+
+
+-ability to progress while a certain thread/process is blocked
+only Galit and Moti programs has the ability to progress while
+a certain thread/process is blocked because they use the os kernel
+level threads/ processes and only the os can run threads/processes
+when other threads/processes are blocked.
+
+-overall speed
+Nira program is the slowest because it doese not use the multi
+cores processors and her code doesnt have concurrency.
+Moti Code is the fastest becase he uses the concurrency of the multi cores.
+Danny program have advantage on single level thread in terms of speed because
+it can have sophisticated schedualing.
+Galit program can be slower than Moti and Danny programs
+because using multi processes is slower than multi threads.
+But it can be faster than single level thread.
+
+
+Question 4:
+-----------
+The shared for a parent and its child from the following:
+
+kernel level thread:
+heap and global variables.
+
+user level thread:
+heap and global variables.
+
+process:
+none of them. nothing is shared.
+
+Question 5:
+-----------
+(taken from stackoverflow)
+
+The difference between deadlock to livelock is that the states of the
+processors involved in the livelock constantly change with regard to one
+another, none progressing. Livelock is a special case of resource starvation.
+The general definition only states that a specific process is not progressing.
+
+Example for deadlock:
+---------------------
+ For 2 threads T1 and T2
+ lets say that T1 waits for T2 to realese a specific lock and at the same time
+ T2 waits for T1 to realse another lock. That is deadlock becase T1 and T2 will
+ not progress because each thread is waiting to the other thread to continue.
+
+Example for livelock:
+----------------------
+For example a program that tries to lock all the threads that are
+running and if it doesnt success to lock them all it starts from the
+begining may cause a livelock because ther can be an infinite loop of trying
+to lock all of the threads, fail in it and begin again...
+
+
+Question6:
+----------
+the brackets in the gant chart represents the time interval for each process.
+
+round robin:
+turnaround time:9.4
+average wait time:4.2
+
+FCFS:
+turnaround time:13.2
+average wait time:8
+
+SRTF:
+turnaround time:7.4
+average wait time:2.2
+
+priority schedualing:
+turnaround time:11.6
+average wait time:6.4

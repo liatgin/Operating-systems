@@ -1,0 +1,151 @@
+liat_gin, amitnelinger
+Liat Ginosar (305470924), Amit Nelinger (203906508)
+EX: 1
+
+
+FILES:
+======
+
+osm.c -- Functions that mesure time of different operations
+
+osm.h -- The header file of osm.c
+
+README -- This file
+
+
+
+ANSWERS:
+
+Task 1:
+=======
+
+WhatIDo actions are: first it creats a directory with the name "Welcome",
+after that it creats another directory inside "Welcome" with the name
+"To". Then the program creates and opens a file named 'OS' inside the path
+"Welcome/To".
+Then the program writes to the file 180 + floor(log(input)) bytes. 
+examples- input = 1 ---> tries to write 180 bytes
+input = 106 ---> tries to write 182 bytes
+input = 43676 --> tries to write 184 bytes
+which include a phrase "If you didn`t read the course gu" (probably continues
+because we can see everytime we give a larger input, it writes more...) 
+Then the program closes the file we wrote to, deletes it, delete the "To"
+directory and finally delete the "Welcome" directory.
+
+Descriptions of the relevant system calls actions:
+==================================================
+
+1)  mkdir("Welcome", 0775) = 0
+	
+	creates a new directory with the name "Welcome".
+
+ 
+2)  mkdir("Welcome/To", 0775) = 0
+
+	creates a new directory with the name "To" inside "Welcome".
+	0 meaning success
+
+
+3)  open("Welcome/To/OS", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3
+
+	creats a new file: "OS" inside "To" and opens it, with specific premission
+	"O_WRONLY|O_CREAT|O_TRUNC" recieves a file descriptor = 3.
+	
+	
+4) fstat(3, {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
+
+	obtains information about an open file. 0 meaning success.
+	
+	
+5)  mmap(NULL, 65536, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0)
+ 	= 0x7ffadece0000
+
+	allocates memory. returns a pointer to mapped region
+
+
+6)  write(3, "If you didn't read the course gu"..., 180) = 180
+
+	writes into the file with the descriptor 3 180+floor(log(input)) bytes
+	from the buffer it given.
+
+7)  close(3) = 0
+
+	frees the file descriptor 3 for other uses. 0 meaning success.
+
+8)	munmap(0x7ffadece0000, 65536) = 0
+
+	removes a map. 0 meaning success.
+
+
+9)  unlink("Welcome/To/OS") = 0
+
+	deletes the file "OS". 0 meaning success.
+
+
+10)  rmdir("Welcome/To/") = 0
+
+	delets the directory "To". 0 meaning success.
+
+
+11) rmdir("Welcome/") = 0
+
+	delets the directory "Welcome". 0 meaning success.
+	
+12) exit_group(0) = ?
+
+	the program ends.
+
+
+  
+Task2
+======
+In order to avoid code repetition we created 
+the function "all_osm_time" who calls the
+relevant function according to the
+action we want to measure.
+
+Description about our implementation:
+
+osm_operation_time - 
+-------------------
+We measured the time of the simple operation-bitwise &.
+Because the time of one bit wise & operation is very 
+short and we want to get an acurate result we called the 
+operation bit wise & as the number of the "iterations"
+variable and then divide the total time we got in the
+number of iterations.
+
+
+osm_function_time
+------------------
+We measured the time of a simple function call by
+implement an empty function "foo" which returns nothing.
+In order to get an accurate result we called "foo"
+"iterations" times and then divided the final result 
+in the iterations variable in order to get the time 
+of a single foo call.
+
+
+osm_syscall_time
+-----------------
+We measured the time of one system call you
+provided us in the exercise - OSM_NULLSYSCALL.
+We called the system call "iterations" times
+and then divided the result in iterations 
+in order to get the time it take to
+a single system call operation.
+
+
+osm_disk_time
+--------------
+In order to measure the time of disk operation
+we created a file and called for 2 operations
+on the file: fopen and fclose. fopen opens 
+the file and fclose closes the file.
+we called those operation iterations times 
+and finally divided the result in the number 
+of the iterations in order to get the time
+of single disk operation.
+
+
+
